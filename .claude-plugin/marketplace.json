@@ -4,11 +4,11 @@
     "name": "Alireza Rezvani",
     "url": "https://alirezarezvani.com"
   },
-  "description": "188 production-ready skill packages for Claude AI across 9 domains: marketing (44), engineering (40 advanced + 32 core), C-level advisory (28), regulatory/QMS (14), product (13), project management (9), business growth (5), and finance (3). Includes 359 Python tools, 485 reference documents, 30 agents, and 33 slash commands.",
+  "description": "246 production-ready skill packages for Claude AI across 9 domains: engineering advanced (67 unique), engineering core (51), marketing (45), c-level advisory (34), product (17), regulatory/QMS (14), project management (9), business growth (5), and finance (4). Includes 359 Python tools, 485 reference documents, 27 agents (20 cs-* + 7 personas), and 33 slash commands.",
   "homepage": "https://github.com/alirezarezvani/claude-skills",
   "repository": "https://github.com/alirezarezvani/claude-skills",
   "metadata": {
-    "description": "188 production-ready skill packages across 9 domains with 359 Python tools, 485 reference documents, 30 agents, and 33 slash commands. Compatible with Claude Code, Codex CLI, Hermes Agent, Cursor, Antigravity, OpenCode, Gemini CLI, and OpenClaw.",
+    "description": "246 production-ready skill packages across 9 domains with 359 Python tools, 485 reference documents, 27 agents (20 cs-* + 7 personas), and 33 slash commands. Compatible with Claude Code, Codex CLI, Hermes Agent, Cursor, Antigravity, OpenCode, Gemini CLI, and OpenClaw.",
     "version": "2.4.4"
   },
   "plugins": [
