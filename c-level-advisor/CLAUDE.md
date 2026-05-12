@@ -1,6 +1,6 @@
 # C-Level Advisory Skills — Claude Code Guidance
 
-A complete virtual board of directors: 28 skills covering 10 executive roles, orchestration, cross-cutting capabilities, and culture & collaboration frameworks.
+A complete virtual board of directors: 28 skills covering 10 executive roles, orchestration, cross-cutting capabilities, and culture & collaboration frameworks — plus the new **c-level-agents** plugin layer that surfaces 8 cs-* persona agents and 17 `/cs:*` slash commands on top of the skills.
 
 ## Architecture
 
@@ -69,6 +69,35 @@ A complete virtual board of directors: 28 skills covering 10 executive roles, or
 | **Change Management** | `change-management/` | ADKAR-based change rollout |
 | **Internal Narrative** | `internal-narrative/` | One story across all audiences |
 
+## c-level-agents Plugin (v1.0.0 — new in v2.5.0)
+
+A separate plugin at `c-level-agents/` that wraps the 10 C-roles with persona agents and slash commands. Founder-mode entry layer.
+
+### 8 cs-* Agents (in `c-level-agents/agents/`)
+
+| Agent | Voice | Wraps Skill |
+|---|---|---|
+| cs-cfo-advisor | Numerate skeptic | cfo-advisor |
+| cs-cmo-advisor | Narrative-first | cmo-advisor |
+| cs-cro-advisor | Pipeline-paranoid | cro-advisor |
+| cs-cpo-advisor | JTBD-driven | cpo-advisor |
+| cs-coo-advisor | Execution OS | coo-advisor |
+| cs-chro-advisor | People-systems | chro-advisor |
+| cs-ciso-advisor | Risk-paranoid | ciso-advisor |
+| cs-chief-of-staff | Router & synthesist | chief-of-staff |
+
+Existing `cs-ceo-advisor` and `cs-cto-advisor` live in `/agents/c-level/` and integrate with the same protocol.
+
+### 17 /cs:* Slash Commands (in `c-level-agents/skills/`)
+
+**Forcing-question office hours (8):** `/cs:office-hours`, `/cs:cfo-review`, `/cs:cmo-review`, `/cs:cpo-review`, `/cs:cro-review`, `/cs:cto-review`, `/cs:ciso-review`, `/cs:gc-review`
+
+**Strategic sprint pipeline (5):** `/cs:brief` → `/cs:boardroom` → `/cs:decide` → `/cs:execute` → `/cs:post-mortem`
+
+**Meta + safety (4):** `/cs:founder-mode` (auto-router), `/cs:onboard` (founder interview), `/cs:cross-eval` (multi-model consensus), `/cs:freeze` (cooldown lock)
+
+See [c-level-agents/README.md](c-level-agents/README.md) for the full plugin guide and [c-level-agents/references/persona-voices.md](c-level-agents/references/persona-voices.md) for voice specs.
+
 ## Executive Mentor Slash Commands
 
 The only skill with a `plugin.json` (namespace: `em`) because it has slash commands. Other skills are invoked by name through the Chief of Staff router or directly by the user. This is intentional — only add `plugin.json` when a skill has dedicated slash commands that need a namespace.
@@ -115,7 +144,8 @@ python decision-logger/scripts/decision_tracker.py
 
 ---
 
-**Last Updated:** 2026-03-05
-**Skills Deployed:** 28 skills (10 roles + 5 mentor commands + 6 orchestration + 6 cross-cutting + 6 culture)
+**Last Updated:** 2026-05-12
+**Skills Deployed:** 28 skills (10 roles + 5 mentor commands + 6 orchestration + 6 cross-cutting + 6 culture) + 17 /cs:* sub-skills in c-level-agents plugin
+**Agents:** 10 cs-* (cs-ceo, cs-cto in /agents/c-level/; 8 new in c-level-agents/agents/)
 **Python Tools:** 25 (stdlib-only)
-**Reference Docs:** 52
+**Reference Docs:** 54 (52 in skills + 2 in c-level-agents/references)

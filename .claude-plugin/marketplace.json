@@ -39,8 +39,8 @@
     {
       "name": "c-level-skills",
       "source": "./c-level-advisor",
-      "description": "28 C-level advisory skills: virtual board of directors (CEO, CTO, COO, CPO, CMO, CFO, CRO, CISO, CHRO), executive mentor, founder coach, orchestration (Chief of Staff, board meetings, decision logger), strategic capabilities (board deck builder, scenario war room, competitive intel, M&A playbook), and culture frameworks.",
-      "version": "2.2.3",
+      "description": "28 C-level advisory skills + c-level-agents plugin layer: virtual board of directors (CEO, CTO, COO, CPO, CMO, CFO, CRO, CISO, CHRO), executive mentor, founder coach, orchestration (Chief of Staff, board meetings, decision logger), strategic capabilities (board deck builder, scenario war room, competitive intel, M&A playbook), culture frameworks, and now 8 new cs-* persona agents + 17 /cs:* slash commands (founder-mode router, office-hours intake, multi-role boardroom, strategic sprint pipeline, cross-model consensus, cooldown freeze).",
+      "version": "2.5.0",
       "author": {
         "name": "Alireza Rezvani"
       },
@@ -52,7 +52,34 @@
         "strategy",
         "leadership",
         "board",
-        "advisory"
+        "advisory",
+        "founder-mode",
+        "boardroom"
+      ],
+      "category": "leadership"
+    },
+    {
+      "name": "c-level-agents",
+      "source": "./c-level-advisor/c-level-agents",
+      "description": "Founder-mode executive team plugin: 8 cs-* C-suite agents (CFO, CMO, CRO, CPO, COO, CHRO, CISO, Chief of Staff) with distinct cognitive voices, plus 17 /cs:* slash commands — forcing-question office hours (CFO/CMO/CPO/CRO/CTO/CISO/GC reviews), strategic sprint pipeline (brief → boardroom → decide → execute → post-mortem), and meta routing (/cs:founder-mode auto-router, /cs:onboard, /cs:cross-eval multi-model consensus, /cs:freeze cooldown lock). Wraps the existing 28 c-level skills with cognitive gearing, persona voice, and artifact-driven handoffs. The business-domain answer to YC Garry Tan's gstack.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Alireza Rezvani"
+      },
+      "keywords": [
+        "founder-mode",
+        "boardroom",
+        "office-hours",
+        "executive-agents",
+        "c-suite",
+        "cfo",
+        "cmo",
+        "cro",
+        "cpo",
+        "ciso",
+        "general-counsel",
+        "decision-logging",
+        "cross-model"
       ],
       "category": "leadership"
     },

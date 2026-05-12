@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a **comprehensive skills library** for Claude AI and Claude Code - reusable, production-ready skill packages that bundle domain expertise, best practices, analysis tools, and strategic frameworks. The repository provides modular skills that teams can download and use directly in their workflows.
 
-**Current Scope:** 246 production-ready skills across 9 domains with 359 Python automation tools, 485 reference guides, 27 agents (20 `cs-*` + 7 personas), and 33 slash commands.
+**Current Scope:** 263 production-ready skills across 9 domains with 359 Python automation tools, 487 reference guides, 35 agents (28 `cs-*` + 7 personas), and 50 slash commands.
 
 **Key Distinction**: This is NOT a traditional application. It's a library of skill packages meant to be extracted and deployed by users into their own Claude workflows.
 
@@ -124,7 +124,17 @@ See [standards/git/git-workflow-standards.md](standards/git/git-workflow-standar
 
 ## Current Version
 
-**Version:** v2.4.5 (latest)
+**Version:** v2.5.0 (latest)
+
+**v2.5.0 Highlights — c-level-agents: Founder-Mode Executive Team:**
+- **c-level-agents** plugin (new, `./c-level-advisor/c-level-agents/`) — 8 cs-* persona agents (CFO, CMO, CRO, CPO, COO, CHRO, CISO, Chief of Staff) with moderate voice differentiation, plus 17 /cs:* slash commands surfaced as sub-skills.
+- **Forcing-question office hours (8):** `/cs:office-hours` (YC-style 6-Q intake), and per-role `/cs:cfo-review`, `/cs:cmo-review`, `/cs:cpo-review`, `/cs:cro-review`, `/cs:cto-review`, `/cs:ciso-review`, `/cs:gc-review` (General Counsel — a lane gstack lacks entirely).
+- **Strategic sprint pipeline (5):** `/cs:brief` → `/cs:boardroom` (6-phase deliberation with Phase 2 isolation + devil's-advocate pass) → `/cs:decide` (two-layer memory + preserved dissent) → `/cs:execute` (90-day plan) → `/cs:post-mortem` (scored against pre-committed criteria).
+- **Meta + safety (4):** `/cs:founder-mode` (auto-router), `/cs:onboard` (12-Q founder interview), `/cs:cross-eval` (multi-model consensus with graceful Claude-only fallback), `/cs:freeze` (cooldown lock on irreversible decisions).
+- **References:** `persona-voices.md` (voice specs) and `llm-wiki-bridge.md` (Markdown-only persistent memory — answer to gstack's gbrain Postgres dependency).
+- Positioned as the business-domain answer to YC Garry Tan's gstack: broader role coverage, real frameworks (RICE/JTBD/OKR/ADKAR/Wardley/8-dim health), compliance lane (ra-qm-team), explicit voice differentiation, and stdlib-only memory.
+
+**Version:** v2.4.5
 
 **v2.4.x Highlights — Reliability Portfolio (Phase 1–4):**
 - **slo-architect** (Phase 4 — keystone) — SLO/SLI/error-budget discipline per Google SRE Workbook. 3 stdlib Python tools (`slo_designer`, `error_budget_calculator` with multi-window burn-rate alerts, `slo_review`), 4 reference docs, asset templates, `/slo-design` slash command. Engineering-advanced bundle 49 → 50.

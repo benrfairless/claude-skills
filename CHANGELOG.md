@@ -5,6 +5,39 @@ All notable changes to the Claude Skills Library will be documented in this file
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.0] - 2026-05-12 — c-level-agents: Founder-Mode Executive Team
+
+### Added — C-Level Advisory
+
+- **c-level-agents** plugin (`./c-level-advisor/c-level-agents/`) — surfaces the existing 28 c-level skills through a founder-mode interface of cs-* persona agents and `/cs:*` slash commands. New marketplace entry registered separately (category: leadership).
+- **8 new cs-* persona agents** with distinct cognitive voices, completing agent coverage for every C-role:
+  - `cs-cfo-advisor` (numerate skeptic) wraps cfo-advisor
+  - `cs-cmo-advisor` (narrative-first) wraps cmo-advisor
+  - `cs-cro-advisor` (pipeline-paranoid) wraps cro-advisor
+  - `cs-cpo-advisor` (JTBD-driven) wraps cpo-advisor
+  - `cs-coo-advisor` (execution OS) wraps coo-advisor
+  - `cs-chro-advisor` (people-systems) wraps chro-advisor
+  - `cs-ciso-advisor` (risk-paranoid) wraps ciso-advisor
+  - `cs-chief-of-staff` (router & synthesist) wraps chief-of-staff
+- **17 /cs:* slash commands** delivered as sub-skills under `c-level-agents/skills/`:
+  - **Forcing-question office hours (8):** `/cs:office-hours` (YC-style 6-question intake), `/cs:cfo-review`, `/cs:cmo-review`, `/cs:cpo-review`, `/cs:cro-review`, `/cs:cto-review`, `/cs:ciso-review`, `/cs:gc-review` (General Counsel — a lane gstack has zero of)
+  - **Strategic sprint pipeline (5):** `/cs:brief` → `/cs:boardroom` (6-phase deliberation with Phase 2 isolation + devil's advocate pass) → `/cs:decide` (two-layer memory log with preserved dissent) → `/cs:execute` (90-day plan with weekly milestones + DRIs) → `/cs:post-mortem` (scored against pre-committed criteria and revisited dissent)
+  - **Meta + safety (4):** `/cs:founder-mode` (auto-router — the killer command), `/cs:onboard` (12-question founder interview → `~/.claude/company-context.md`), `/cs:cross-eval` (multi-model consensus with graceful degradation to Claude-only adversarial mode when Codex/Gemini absent), `/cs:freeze` (cooldown lock on irreversible decisions with `/cs:unfreeze` audit trail)
+- **References:** `c-level-agents/references/persona-voices.md` (voice specs per role — moderate aggression: bookend opening + closing, neutral analysis body) and `c-level-agents/references/llm-wiki-bridge.md` (Markdown-only persistent memory via `llm-wiki` — the answer to gstack's gbrain Postgres+pgvector dependency).
+- **c-level-skills marketplace entry** description expanded and version bumped to v2.5.0 to reflect the bundled plugin layer.
+
+### Why This Matters
+
+Garry Tan's `gstack` (~66K stars) demonstrated the power of slash-command-first, forcing-question agent gearing — but its "executives" are all software-shipping personas (CEO = scope-cutter, Eng Mgr = test matrix). This release brings the same pattern to **real business decisions**: CFO with unit economics, CMO with positioning, General Counsel with contract risk, CISO with threat modeling, and a 6-phase boardroom that surpasses gstack's sequential review chain with Phase 2 isolation + adversarial pass. Combined with this repo's pre-existing compliance (ra-qm-team), finance, marketing, business-growth, and product domains, this is the business-domain answer to founder-mode — broader role coverage, real frameworks, Markdown-only memory, and explicit voice differentiation.
+
+### Changed
+
+- **Total skills:** 246 → 263 (+17 from c-level-agents sub-skills)
+- **cs-* agents:** 20 → 28 (+8 new c-level personas inside the plugin)
+- **Slash commands:** 33 → 50 (+17 /cs:* commands as sub-skills)
+- **Marketplace plugins:** 33 → 34 (+1 c-level-agents entry)
+- **c-level-skills** plugin: v2.2.3 → v2.5.0
+
 ## [2.4.5] - 2026-05-11 — Reliability Portfolio + Count-Truth Reconciliation
 
 ### Added — Engineering POWERFUL
