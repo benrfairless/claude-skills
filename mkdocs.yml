@@ -351,6 +351,29 @@ nav:
       - "Chief AI Officer Advisor": skills/c-level-advisor/chief-ai-officer-advisor.md
       - "Chief Customer Officer Advisor": skills/c-level-advisor/chief-customer-officer-advisor.md
       - "VP Engineering Advisor": skills/c-level-advisor/vpe-advisor.md
+      - Founder-Mode Commands (c-level-agents):
+        - "c-level-agents Index": skills/c-level-advisor/c-level-agents.md
+        - "/cs:office-hours": skills/c-level-advisor/c-level-agents-office-hours.md
+        - "/cs:cfo-review": skills/c-level-advisor/c-level-agents-cfo-review.md
+        - "/cs:cmo-review": skills/c-level-advisor/c-level-agents-cmo-review.md
+        - "/cs:cpo-review": skills/c-level-advisor/c-level-agents-cpo-review.md
+        - "/cs:cro-review": skills/c-level-advisor/c-level-agents-cro-review.md
+        - "/cs:cto-review": skills/c-level-advisor/c-level-agents-cto-review.md
+        - "/cs:ciso-review": skills/c-level-advisor/c-level-agents-ciso-review.md
+        - "/cs:gc-review": skills/c-level-advisor/c-level-agents-gc-review.md
+        - "/cs:cdo-review": skills/c-level-advisor/c-level-agents-cdo-review.md
+        - "/cs:caio-review": skills/c-level-advisor/c-level-agents-caio-review.md
+        - "/cs:cco-review": skills/c-level-advisor/c-level-agents-cco-review.md
+        - "/cs:vpe-review": skills/c-level-advisor/c-level-agents-vpe-review.md
+        - "/cs:brief": skills/c-level-advisor/c-level-agents-brief.md
+        - "/cs:boardroom": skills/c-level-advisor/c-level-agents-boardroom.md
+        - "/cs:decide": skills/c-level-advisor/c-level-agents-decide.md
+        - "/cs:execute": skills/c-level-advisor/c-level-agents-execute.md
+        - "/cs:post-mortem": skills/c-level-advisor/c-level-agents-post-mortem.md
+        - "/cs:founder-mode": skills/c-level-advisor/c-level-agents-founder-mode.md
+        - "/cs:onboard": skills/c-level-advisor/c-level-agents-onboard.md
+        - "/cs:cross-eval": skills/c-level-advisor/c-level-agents-cross-eval.md
+        - "/cs:freeze": skills/c-level-advisor/c-level-agents-freeze.md
       - Executive Mentor:
         - "Executive Mentor": skills/c-level-advisor/executive-mentor.md
         - "Board Prep": skills/c-level-advisor/executive-mentor-board-prep.md
