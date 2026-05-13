@@ -5,6 +5,68 @@ All notable changes to the Claude Skills Library will be documented in this file
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.5.4] - 2026-05-13 — chief-customer-officer-advisor: retention-obsessed CCO
+
+### Added — C-Level Advisory
+
+- **chief-customer-officer-advisor** skill (`./c-level-advisor/skills/chief-customer-officer-advisor/`) — opinionated, retention-obsessed CCO skill. Fourth decision-driven C-role skill in the founder-mode lineup. Covers four specific decisions (not generic CS survey):
+  1. **What's our retention architecture — and is gross retention vs NRR honest?** (decomposition + 7-category churn taxonomy)
+  2. **How do we segment customers for differential investment?** (4-tier framework + ICP fit scoring + kill list)
+  3. **What's the CS team's coverage model — and when do we go pooled vs named?** (ratio math + manager trigger)
+  4. **What CS role do we hire next?** (stage-to-role map; CSM ≠ Support ≠ AM ≠ IM)
+- **3 stdlib Python tools with deterministic logic:**
+  - **`retention_decomposition_analyzer.py`** — Decomposes ARR retention by cohort into GRR (truth) / NRR (vanity if alone) / Logo Retention separately. Flags leaky-bucket pattern (NRR > 100% AND GRR < 85%). Categorizes churn across 7-category root-cause taxonomy (product_fit / competitor_loss / no_value_realized / pricing / champion_left / company_event / tactical_failure) and computes preventable % (CS-controllable). Embedded sample: 2 cohorts, Q1 GRR 91.7% CONCERNING (NRR too low at 106.7%), Q2 GRR 84.7% CRITICAL (declining trend), top driver = product_fit at 54.5% preventable.
+  - **`customer_segmentation_designer.py`** — Assigns 4-tier segment (Strategic / Enterprise / Mid-market / SMB-long-tail) by ARR. Scores ICP fit 0-10 from 7 weighted signals (industry, size, workflow, exec sponsor, advocacy, expansion potential, competitor concentration). Surfaces kill list (support cost > 50% of ARR AND ICP fit < 5) with the 3 paths (non-renewal / downgrade-to-tech-touch / raise-price). Surfaces upgrade candidates (high fit + expansion potential).
+  - **`cs_coverage_calculator.py`** — Calculates required CSM headcount per tier with two constraints (ARR ratio AND account count, whichever is binding). Surfaces manager-trigger thresholds (5+ ICs in tier OR 8+ across function). Generates 12-month hiring plan with quarterly sequencing. Includes fully-loaded cost projection.
+- **4 in-depth references each citing 5+ authoritative sources:**
+  - `retention_decomposition.md` — GRR vs NRR honest math + leaky-bucket pattern + 7-category churn taxonomy + leading-indicator playbook + cohort discipline. Cites Mehta/Steinman/Murphy "Customer Success", Lincoln Murphy, David Skok (forEntrepreneurs), BVP State of the Cloud, ChartMogul/ProfitWell benchmarks, Reichheld "The Loyalty Effect", Tomasz Tunguz.
+  - `customer_segmentation_strategy.md` — 4-tier framework + ICP fit weighting (7 signals) + tier transition triggers + kill list criteria + the 3 paths. Cites Lincoln Murphy, Bain "Loyalty Effect", Tunguz, Skok, ChartMogul/ProfitWell, Adamson/Dixon/Toman "Challenger Customer".
+  - `cs_coverage_model.md` — Tech-touch / pooled / named / named+exec models + ARR-per-CSM ratios by stage and segment + manager-trigger + CS comp design + ramp curves. Cites Gainsight, TSIA, Mehta/Pickens "Customer Success Economy", ChurnZero, Skok, Lincoln Murphy, Pacific Crest/KeyBanc SaaS survey.
+  - `cs_team_org_evolution.md` — 5-stage role map + 6-role definition table (CSM ≠ Support ≠ AM ≠ IM ≠ CS Ops ≠ Customer Marketing) + AM-vs-CSM split decision + 7 anti-patterns. Cites Mehta/Steinman/Murphy, Mehta/Pickens, BVP, TSIA, Gainsight, ChurnZero, Lincoln Murphy.
+- **cs-cco-advisor** agent (`./c-level-advisor/c-level-agents/agents/cs-cco-advisor.md`) — retention-obsessed pragmatist. Voice: "What's your gross retention rate, and what's the #1 reason customers leave?" Trusts gross retention over NRR. Refuses to recommend CS hires without naming the customer outcome they unblock.
+- **`/cs:cco-review`** slash command (`./c-level-advisor/c-level-agents/skills/cco-review/SKILL.md`) — 6-question forcing interrogation: GRR (not NRR), top churn driver, time-to-value, kill-list candidates, ARR-per-CSM ratio + coverage model, CS comp alignment.
+- **cs-cco-advisor voice spec** added to `persona-voices.md`.
+- **Dual-published from the start:** standalone plugin at `c-level-advisor/chief-customer-officer-advisor/` with mirrored content (per the same pattern as #624 for GC/CDO/CAIO). `sync_skill_bundles.py` keeps both copies aligned.
+
+### Why This Matters
+
+By 2026, every B2B SaaS founder is being asked a board-level question: "What's your NRR?" The truth is that NRR alone is the vanity metric — it can hide a leaky bucket where 85% gross retention is masked by expansion from the survivors. This skill enforces the discipline of decomposition before reporting, and surfaces three decisions the other C-roles can't quite own:
+
+- **CRO** owns the revenue math (NRR, expansion comp, ramp); **CCO** owns customer *experience* and the 7-category churn root cause analysis. Clean split.
+- **CPO** owns product roadmap; **CCO** surfaces product gaps via churn data. CPO decides; CCO feeds.
+- **CHRO** owns CS team comp; **CCO** designs the coverage model + ratios. CHRO executes; CCO designs.
+
+The differential-investment framework (kill list + upgrade candidates) is the strategically distinct CCO contribution. Most founders avoid the kill-list conversation; this skill makes it mechanical.
+
+### Built with Karpathy-Coder Discipline (fourth consecutive PR)
+
+Maintained the discipline established in v2.5.2:
+
+- **Principle 1:** assumptions surfaced upfront, including the CRO vs CCO split assumption (revenue math vs customer experience). Locked direction before code.
+- **Principle 2:** rejected generic "customer success survey" framing. Each tool/reference covers ONE decision. No overlap with `business-growth/customer-success-management/`.
+- **Principle 3:** touched only files in the locked plan. No "while I'm here" cleanup of unrelated files. No edits to other c-level skills.
+- **Principle 4:** all 3 Python tools smoke-tested with embedded samples before commit. Verifiable outputs (Q1 GRR 91.7% CONCERNING / Q2 GRR 84.7% CRITICAL; 5 customers tiered with 1 kill + 2 upgrade candidates; 4 → 12 CSMs / $2.25M annual cost at 40% growth).
+
+### Changed
+
+- **Total skills:** 266 → 267 (+1 chief-customer-officer-advisor)
+- **cs-* agents:** 31 → 32 (+1 cs-cco-advisor in c-level-agents plugin)
+- **/cs:* slash commands:** 19 → 20 (+1 /cs:cco-review)
+- **Python tools:** 367 → 370 (+3 in chief-customer-officer-advisor/scripts/)
+- **References:** 498 → 502 (+4 in chief-customer-officer-advisor/references/)
+- **Marketplace plugins:** 37 → 38 (+1 standalone chief-customer-officer-advisor entry)
+- **c-level-skills** plugin: v2.5.3 → v2.5.4 (description expanded; 31 → 32 skills, 11 → 12 cs-* agents)
+- **c-level-agents** plugin: v1.3.0 → v1.4.0 (description expanded with CCO; new agent + command; +`chief-customer-officer`, `cco`, `retention-decomposition`, `customer-segmentation`, `cs-coverage` keywords)
+
+### Known follow-ups (NOT in this PR per surgical scope)
+
+- The `cs-general-counsel-advisor` voice spec is still missing from `persona-voices.md` (carried from v2.5.1). Will be addressed in a separate small PR.
+- Phase 2 remainder (2 more C-roles: VPE engineering execution, CCO-comms) deferred to v2.5.5+.
+
+### Disclaimer
+
+Retention benchmarks vary significantly by ACV, segment, and industry. This skill provides B2B SaaS-baseline guidance; consumer SaaS, marketplaces, and hardware have materially different retention math.
+
 ## [2.5.3] - 2026-05-12 — chief-ai-officer-advisor: AI strategy with citations
 
 ### Added — C-Level Advisory

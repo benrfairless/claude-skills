@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a **comprehensive skills library** for Claude AI and Claude Code - reusable, production-ready skill packages that bundle domain expertise, best practices, analysis tools, and strategic frameworks. The repository provides modular skills that teams can download and use directly in their workflows.
 
-**Current Scope:** 266 production-ready skills across 9 domains with 367 Python automation tools, 498 reference guides, 38 agents (31 `cs-*` + 7 personas), and 52 slash commands.
+**Current Scope:** 267 production-ready skills across 9 domains with 370 Python automation tools, 502 reference guides, 39 agents (32 `cs-*` + 7 personas), and 53 slash commands.
 
 **Key Distinction**: This is NOT a traditional application. It's a library of skill packages meant to be extracted and deployed by users into their own Claude workflows.
 
@@ -124,9 +124,16 @@ See [standards/git/git-workflow-standards.md](standards/git/git-workflow-standar
 
 ## Current Version
 
-**Version:** v2.5.3 (latest)
+**Version:** v2.5.4 (latest)
 
-**v2.5.3 Highlights — chief-ai-officer-advisor: AI strategy with citations:**
+**v2.5.4 Highlights — chief-customer-officer-advisor: retention-obsessed CCO:**
+- **chief-customer-officer-advisor** skill (new, `./c-level-advisor/skills/chief-customer-officer-advisor/`) — opinionated, retention-obsessed CCO skill covering 4 specific decisions. 3 stdlib Python tools with deterministic logic: `retention_decomposition_analyzer.py` (decomposes ARR retention into GRR / NRR / Logo by cohort, flags leaky-bucket pattern, categorizes churn into 7-category root-cause taxonomy with preventable %), `customer_segmentation_designer.py` (assigns 4-tier segment, scores ICP fit 0-10 across 7 weighted signals, surfaces kill list + upgrade candidates), `cs_coverage_calculator.py` (calculates CSM headcount per tier with ARR ratio + account count constraints, generates 12-month hiring plan with quarterly sequencing + manager-trigger thresholds). 4 in-depth references each citing 5+ authoritative sources (Mehta/Steinman/Murphy, BVP, TSIA, Skok, Tunguz).
+- **cs-cco-advisor** agent (new) — retention-obsessed pragmatist orchestrating the skill via `/cs:cco-review`. Distinct voice: "What's your gross retention rate, and what's the #1 reason customers leave?" Trusts gross retention over NRR; refuses to recommend CS hires without naming the customer outcome they unblock.
+- **/cs:cco-review** (new slash command) — 6-question forcing interrogation: GRR (not NRR) truth, top churn driver, time-to-value by segment, kill-list candidates, ARR-per-CSM ratio + coverage model, CS comp alignment.
+- **Dual-published from the start:** standalone marketplace plugin AND bundled in c-level-skills.
+- **Karpathy-coder discipline maintained:** assumptions surfaced upfront, verifiable success criteria, deterministic tool logic, no scope creep into business-growth tactical CS skills.
+
+**Version:** v2.5.3
 - **chief-ai-officer-advisor** skill (new, `./c-level-advisor/skills/chief-ai-officer-advisor/`) — opinionated, eval-demanding CAIO skill covering 4 specific decisions. 3 stdlib Python tools with deterministic logic: `model_buildvsbuy_calculator.py` (API vs fine-tune vs build with 3-year TCO, balances economic breakeven with practical feasibility), `ai_risk_classifier.py` (EU AI Act tier classification with Article-level citations + US state patchwork: NYC LL 144, CO AI Act, IL HB 53, CA SB 1001, IL BIPA + industry overlays for FDA/NYDFS/NAIC/ECOA), `ai_cost_economics.py` (API vs self-hosted breakeven with 2026 pricing across A100/H100, utilization reality, hidden costs). 4 in-depth references each citing 5+ authoritative sources: model build-vs-buy strategy (decision tree, 6 fine-tuning approaches, failure modes), AI risk governance (full EU AI Act tier map + NIST AI RMF + governance program checklist), AI cost economics (2026 pricing + GPU economics + migration cost + prompt caching), AI team org evolution (5-stage role map + 9-role definition table + AI team vs data team contrast + 7 anti-patterns).
 - **cs-caio-advisor** agent (new) — eval-demanding realist orchestrating the skill via `/cs:caio-review`. Distinct voice: "What does this AI need to be good at, and how would you measure it?" Treats every AI use case as a hiring decision; demands eval set, SLO, and fallback before scale.
 - **/cs:caio-review** (new slash command) — 6-question forcing interrogation: eval discipline, hallucination SLO, regulatory classification, model selection, cost trajectory, role-that-unblocks.

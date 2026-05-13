@@ -21,7 +21,7 @@ A complete virtual board of directors: 28 skills covering 10 executive roles, or
 
 ## Skills Overview
 
-### C-Suite Roles (13)
+### C-Suite Roles (14)
 
 | Role | Folder | Reasoning Technique | Scripts |
 |------|--------|-------------------|---------|
@@ -36,7 +36,8 @@ A complete virtual board of directors: 28 skills covering 10 executive roles, or
 | **CHRO** | `chro-advisor/` | Empathy + Data | hiring_plan_modeler, comp_benchmarker |
 | **General Counsel** | `general-counsel-advisor/` | Risk-Based | contract_risk_scanner, term_sheet_analyzer |
 | **Chief Data Officer** | `chief-data-officer-advisor/` | Decision-Driven | ai_training_data_audit, data_product_strategy_picker, data_asset_valuator |
-| **Chief AI Officer** ⭐ NEW v2.5.3 | `chief-ai-officer-advisor/` | Eval-Demanding | model_buildvsbuy_calculator, ai_risk_classifier, ai_cost_economics |
+| **Chief AI Officer** | `chief-ai-officer-advisor/` | Eval-Demanding | model_buildvsbuy_calculator, ai_risk_classifier, ai_cost_economics |
+| **Chief Customer Officer** ⭐ NEW v2.5.4 | `chief-customer-officer-advisor/` | Retention-Obsessed | retention_decomposition_analyzer, customer_segmentation_designer, cs_coverage_calculator |
 | **Executive Mentor** | `executive-mentor/` | Adversarial | decision_matrix_scorer, stakeholder_mapper |
 
 ### Orchestration (6)
@@ -76,7 +77,7 @@ A complete virtual board of directors: 28 skills covering 10 executive roles, or
 
 A separate plugin at `c-level-agents/` that wraps the 10 C-roles with persona agents and slash commands. Founder-mode entry layer.
 
-### 11 cs-* Agents (in `c-level-agents/agents/`)
+### 12 cs-* Agents (in `c-level-agents/agents/`)
 
 | Agent | Voice | Wraps Skill |
 |---|---|---|
@@ -90,7 +91,8 @@ A separate plugin at `c-level-agents/` that wraps the 10 C-roles with persona ag
 | cs-chief-of-staff | Router & synthesist | chief-of-staff |
 | cs-general-counsel-advisor | Risk-paranoid (legal) | general-counsel-advisor |
 | cs-cdo-advisor | Decision-driven (data) | chief-data-officer-advisor |
-| cs-caio-advisor ⭐ NEW v2.5.3 | Eval-demanding (AI) | chief-ai-officer-advisor |
+| cs-caio-advisor | Eval-demanding (AI) | chief-ai-officer-advisor |
+| cs-cco-advisor ⭐ NEW v2.5.4 | Retention-obsessed (customer) | chief-customer-officer-advisor |
 
 Existing `cs-ceo-advisor` and `cs-cto-advisor` live in `/agents/c-level/` and integrate with the same protocol.
 
@@ -150,8 +152,8 @@ python decision-logger/scripts/decision_tracker.py
 
 ---
 
-**Last Updated:** 2026-05-12
-**Skills Deployed:** 31 skills (13 roles incl. General Counsel, Chief Data Officer, and Chief AI Officer + 5 mentor commands + 6 orchestration + 6 cross-cutting + 6 culture) + 19 /cs:* sub-skills in c-level-agents plugin
-**Agents:** 13 cs-* (cs-ceo, cs-cto in /agents/c-level/; 11 in c-level-agents/agents/ including new cs-caio-advisor)
-**Python Tools:** 33 (stdlib-only) — +3 with chief-ai-officer-advisor (model_buildvsbuy_calculator, ai_risk_classifier, ai_cost_economics)
-**Reference Docs:** 65 (63 in skills + 2 in c-level-agents/references)
+**Last Updated:** 2026-05-13
+**Skills Deployed:** 32 skills (14 roles incl. General Counsel, CDO, CAIO, and CCO + 5 mentor commands + 6 orchestration + 6 cross-cutting + 6 culture) + 20 /cs:* sub-skills in c-level-agents plugin
+**Agents:** 14 cs-* (cs-ceo, cs-cto in /agents/c-level/; 12 in c-level-agents/agents/ including new cs-cco-advisor)
+**Python Tools:** 36 (stdlib-only) — +3 with chief-customer-officer-advisor (retention_decomposition_analyzer, customer_segmentation_designer, cs_coverage_calculator)
+**Reference Docs:** 69 (67 in skills + 2 in c-level-agents/references)

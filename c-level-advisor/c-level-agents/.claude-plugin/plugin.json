@@ -1,7 +1,7 @@
 {
   "name": "c-level-agents",
-  "description": "Founder-mode executive team plugin: 11 cs-* C-suite agents (CFO, CMO, CRO, CPO, COO, CHRO, CISO, Chief of Staff, General Counsel, Chief Data Officer, Chief AI Officer) plus 19 /cs:* slash commands for forcing-question office hours (incl. /cs:cdo-review, /cs:caio-review), multi-role boardroom deliberation, strategic sprint pipeline, and meta routing. Wraps the 31 c-level skills (including chief-ai-officer-advisor with model build-vs-buy calculator + AI risk classifier covering EU AI Act + AI cost economics with API-vs-self-hosted breakeven) with cognitive gearing and artifact handoffs.",
-  "version": "1.3.0",
+  "description": "Founder-mode executive team plugin: 12 cs-* C-suite agents (CFO, CMO, CRO, CPO, COO, CHRO, CISO, Chief of Staff, General Counsel, Chief Data Officer, Chief AI Officer, Chief Customer Officer) plus 20 /cs:* slash commands for forcing-question office hours (incl. /cs:cdo-review, /cs:caio-review, /cs:cco-review), multi-role boardroom deliberation, strategic sprint pipeline, and meta routing. Wraps the 32 c-level skills (including chief-customer-officer-advisor with retention decomposition analyzer + customer segmentation designer + CS coverage calculator) with cognitive gearing and artifact handoffs.",
+  "version": "1.4.0",
   "author": {
     "name": "Alireza Rezvani",
     "url": "https://alirezarezvani.com"
