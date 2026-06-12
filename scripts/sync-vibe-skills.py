@@ -5,10 +5,20 @@ sync-vibe-skills.py — Install claude-code-skills into Mistral Vibe.
 Mistral Vibe (https://github.com/mistralai/mistral-vibe) discovers skills
 from ~/.vibe/skills/ (user-global) and .vibe/skills/ (project-local). This
 script creates symlinks from our repo's skill directories into Vibe's skill
-directory, preserving the category structure.
+directory.
 
 Both tools use the agentskills.io standard (SKILL.md with YAML frontmatter),
 so no format conversion is needed — just symlink the directories.
+
+IMPORTANT — flat layout (see issue #748): Vibe's SkillManager discovers skills
+with ``Path.iterdir()`` over each search path, i.e. it only looks at the
+IMMEDIATE children of ~/.vibe/skills/ and checks ``<child>/SKILL.md``. It does
+NOT recurse. An earlier version nested skills under
+``~/.vibe/skills/claude-skills/<domain>/<skill>/``, which Vibe could not see
+(it found only the ``claude-skills`` dir, with no SKILL.md directly inside) —
+so Vibe reported 0 skills. We therefore place each skill ONE level deep with a
+``claude-`` name prefix for namespace safety. A flat layout is discoverable by
+both recursive and non-recursive crawlers, so it is the universally-safe shape.
 
 Usage:
     python scripts/sync-vibe-skills.py                   # full sync
@@ -18,7 +28,7 @@ Usage:
     python scripts/sync-vibe-skills.py --copy             # copy instead of symlink
 
 Vibe skill directory: ~/.vibe/skills/
-Our skills land under:  ~/.vibe/skills/claude-skills/<domain>/<skill-name>/
+Our skills land at:     ~/.vibe/skills/claude-<skill-name>/  (flat, one level)
 """
 from __future__ import annotations
 
@@ -31,7 +41,9 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 VIBE_SKILLS_DIR = Path.home() / ".vibe" / "skills"
-TARGET_SUBDIR = "claude-skills"  # namespace to avoid collisions with Vibe built-in skills
+NAME_PREFIX = "claude-"  # per-skill dir prefix; namespaces our skills vs Vibe built-ins
+LEGACY_SUBDIR = "claude-skills"  # old nested namespace dir (issue #748); removed on sync
+INDEX_FILENAME = "claude-skills-index.json"
 
 # Domain directories that contain skills (each subdirectory with a SKILL.md)
 DOMAIN_DIRS = [
@@ -146,18 +158,42 @@ def read_frontmatter(skill_md):
         return {}
 
 
+def assign_target_names(skills, prefix=NAME_PREFIX):
+    """Assign each skill a unique, flat on-disk directory name.
+
+    Vibe discovers skills one level deep (``Path.iterdir()``), so every skill
+    must be an immediate child of the skills dir. The displayed skill name comes
+    from SKILL.md frontmatter, not this directory name — so the dir name only has
+    to be unique on disk. We prefix with ``claude-`` and fall back to a
+    domain-qualified name (then a numeric suffix) on collision.
+    """
+    used: set = set()
+    for s in skills:
+        candidate = f"{prefix}{s['name']}"
+        if candidate in used:
+            candidate = f"{prefix}{s['domain']}-{s['name']}"
+        n = 2
+        base = candidate
+        while candidate in used:
+            candidate = f"{base}-{n}"
+            n += 1
+        used.add(candidate)
+        s["target_name"] = candidate
+    return skills
+
+
 def sync_skill(skill, target_root, use_copy, verbose, dry_run):
-    """Create a symlink or copy for one skill."""
-    target = target_root / skill["domain"] / skill["name"]
+    """Create a symlink or copy for one skill (flat, one level deep)."""
+    target = target_root / skill["target_name"]
 
     if target.exists() or target.is_symlink():
         if verbose:
-            print(f"  skip (exists): {skill['domain']}/{skill['name']}")
+            print(f"  skip (exists): {skill['target_name']}")
         return "skip"
 
     if dry_run:
         if verbose:
-            print(f"  would {'copy' if use_copy else 'link'}: {skill['domain']}/{skill['name']}")
+            print(f"  would {'copy' if use_copy else 'link'}: {skill['target_name']}")
         return "would"
 
     target.parent.mkdir(parents=True, exist_ok=True)
@@ -175,7 +211,7 @@ def sync_skill(skill, target_root, use_copy, verbose, dry_run):
             target.symlink_to(skill["source"])
 
     if verbose:
-        print(f"  {'copied' if use_copy else 'linked'}: {skill['domain']}/{skill['name']}")
+        print(f"  {'copied' if use_copy else 'linked'}: {skill['target_name']}")
     return "new"
 
 
@@ -194,9 +230,9 @@ def write_index(target_root, skills):
         index["domains"][d].append({
             "name": s["name"],
             "description": fm.get("description", ""),
-            "path": f"{d}/{s['name']}",
+            "path": s["target_name"],
         })
-    index_path = target_root / "skills-index.json"
+    index_path = target_root / INDEX_FILENAME
     index_path.write_text(json.dumps(index, indent=2), encoding="utf-8")
     return index_path
 
@@ -222,7 +258,7 @@ def main():
     )
     args = p.parse_args()
 
-    target_root = Path(args.target).expanduser() / TARGET_SUBDIR
+    target_root = Path(args.target).expanduser()
     domains = [args.domain] if args.domain else None
     skills = discover_skills(REPO_ROOT, domains)
 
@@ -234,8 +270,15 @@ def main():
             print(f"[error] {msg}", file=sys.stderr)
         sys.exit(1)
 
+    assign_target_names(skills)
+
     if not args.dry_run:
         target_root.mkdir(parents=True, exist_ok=True)
+        # Migrate away from the old nested layout (issue #748): remove the legacy
+        # ~/.vibe/skills/claude-skills/ namespace dir that Vibe could not discover.
+        legacy = target_root / LEGACY_SUBDIR
+        if legacy.is_dir():
+            shutil.rmtree(legacy, ignore_errors=True)
 
     counts = {"new": 0, "skip": 0, "would": 0}
     for s in skills:
@@ -246,7 +289,7 @@ def main():
     if not args.dry_run:
         idx_path = write_index(target_root, skills)
     else:
-        idx_path = target_root / "skills-index.json"
+        idx_path = target_root / INDEX_FILENAME
 
     summary = {
         "status": "ok",
