@@ -3,7 +3,7 @@
   "name": "claude-code-skills",
   "description": "Production-ready skill packages for AI agents - Marketing, Engineering, Product, C-Level, PM, and RA/QM",
   "repository": "https://github.com/alirezarezvani/claude-skills",
-  "total_skills": 349,
+  "total_skills": 350,
   "skills": [
     {
       "name": "business-growth-skills",
@@ -1398,6 +1398,12 @@
       "description": "Create new agent skills with proper structure, progressive disclosure, and bundled resources. Use when user wants to create, write, build, or author a new skill."
     },
     {
+      "name": "zero-hallucination-coder",
+      "source": "../../engineering/zero-hallucination-coder/skills/zero-hallucination-coder",
+      "category": "engineering-advanced",
+      "description": "Runs a disciplined Discuss -> Map -> Decompose -> Execute -> Verify loop that grounds code in verified structure \u2014 no invented APIs, no assumed imports, no placeholder code \u2014 with a lazy-senior-dev YAGNI ladder that deletes unnecessary code before it is written. Use when a coding task is high-stakes, complex, or spans existing code (auth, databases, migrations, multi-file features), or when the user explicitly asks to plan carefully before coding, avoid hallucinated code, or work rigorously. Not for trivial edits, typos, or throwaway one-off scripts \u2014 those do not need the full loop."
+    },
+    {
       "name": "business-investment-advisor",
       "source": "../../finance/business-investment-advisor/skills/business-investment-advisor",
       "category": "finance",
@@ -2137,7 +2143,7 @@
       "description": "Software engineering and technical skills"
     },
     "engineering-advanced": {
-      "count": 78,
+      "count": 79,
       "source": "../../engineering",
       "description": "Advanced engineering skills - agents, RAG, MCP, CI/CD, databases, observability"
     },
