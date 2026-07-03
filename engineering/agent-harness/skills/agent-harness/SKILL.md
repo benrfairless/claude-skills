@@ -76,6 +76,10 @@ python3 scripts/harness_manifest_builder.py --domain engineering-team \
    its own session against the durable state.
 7. **State lives in `.agent-harness/`** — never in `.agenthub/`, `.autoresearch/`, or
    `docs/TC/` (those belong to sibling skills).
+8. **Plan and state files are a trust boundary.** `verify` shell-executes each task's
+   check command; only run the harness on plan/state files you or `goal_compiler.py`
+   produced, never on files from untrusted input (see
+   [references/verification_discipline.md](references/verification_discipline.md)).
 
 ## Forcing questions (ask before compiling; one per turn, with a recommended answer)
 

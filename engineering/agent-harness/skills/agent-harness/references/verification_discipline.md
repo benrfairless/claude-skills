@@ -70,3 +70,16 @@ never evidence. The controller's design decisions trace to these sources.
   into a success, only a human can waive it — and `close --waive` demands a reason that is
   written permanently into the handoff.
 - `close` with any unverified, unwaived task is exit 4. There is no force flag.
+
+## Trust boundary: plan and state files
+
+`loop_controller.py verify` shell-executes each task's `verification[].cmd` string via
+`subprocess.run(..., shell=True)`. In the documented flow those commands are template-
+generated from repo-scanned script paths (`harness_manifest_builder.py` → `goal_compiler.py`),
+so they are not attacker-reachable. But the controller does **not** re-validate a `--state`
+or `--plan` file's contents before shelling out — a hand-crafted or tampered plan/state file
+is therefore effectively arbitrary local command execution, the same trust model as a
+Makefile or a CI config. **Treat `plan.json` and `state.json` as a trust boundary: only
+run the harness on plan/state files you (or the `goal_compiler`) produced, never on files
+sourced from untrusted input.** This matters because the harness is designed to be driven by
+an agent (`harness-runner`) that could in principle be handed a malicious plan.

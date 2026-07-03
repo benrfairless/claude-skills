@@ -32,7 +32,6 @@ import argparse
 import datetime
 import json
 import os
-import shlex
 import subprocess
 import sys
 import tempfile
@@ -185,7 +184,7 @@ def cmd_record(args):
     save(state, args.state)
     d, dcode = directive(state)
     result["directive"] = d
-    return emit(result, max(code, dcode if dcode != 0 else 0) if code == 0 else code)
+    return emit(result, code if code != 0 else dcode)
 
 
 def _fail(task):
