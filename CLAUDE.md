@@ -529,7 +529,7 @@ This repository publishes skills to **ClawHub** (clawhub.com) as the distributio
 - Creating dependencies between skills (keep each self-contained)
 - Adding complex build systems or test frameworks (maintain simplicity)
 - Generic advice (focus on specific, actionable frameworks)
-- LLM calls in scripts (defeats portability and speed)
+- LLM calls in scripts (defeats portability and speed) — **one documented, opt-in exception:** `engineering/skillopt-sleep/skillopt_sleep/backend.py`'s `claude`/`codex` backends shell out to those CLIs when a real (non-`mock`) backend is explicitly selected. This is the deployment engine for a self-improvement *loop* (harvest → replay → gate), not a stdlib analysis tool, and the default backend (`mock`) is deterministic with zero API spend. Do not cite this as precedent for adding LLM calls to an analysis/reference skill's scripts — those still must stay stdlib-only.
 - Over-documenting file structure (skills are simple by design)
 
 ## Working with This Repository

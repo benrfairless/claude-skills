@@ -1,21 +1,61 @@
 # SkillOpt-Sleep (vendored plugin)
 
-This folder is a **verbatim copy** of the `skillopt_sleep` engine and the
-Claude Code plugin surface from
+This folder started as a **verbatim copy** of the `skillopt_sleep` engine and
+the Claude Code plugin surface from
 [microsoft/SkillOpt](https://github.com/microsoft/SkillOpt)
-(`skillopt_sleep/`, `plugins/claude-code/`, `plugins/run-sleep.sh`). No logic
-was modified — only relocated so path resolution (`CLAUDE_PLUGIN_ROOT`-relative
-lookups in `scripts/sleep.sh` / `scripts/run-sleep.sh`) resolves correctly at
-this folder's location. Licensed under the [MIT License](LICENSE) ©
-Microsoft Corporation.
+(`skillopt_sleep/`, `plugins/claude-code/`, `plugins/run-sleep.sh`), only
+relocated so path resolution (`CLAUDE_PLUGIN_ROOT`-relative lookups in
+`scripts/sleep.sh` / `scripts/run-sleep.sh`) resolves correctly at this
+folder's location. Licensed under the [MIT License](LICENSE) © Microsoft
+Corporation. A small number of targeted patches were made afterward to close
+gaps between this plugin's own safety claims and what the code actually did
+— see **Deviations from upstream** below. Re-apply all of these on re-vendor;
+they are not upstream yet.
 
-One cosmetic wording change was made to satisfy this repo's `scripts/check_paths.py`
-CI gate: `skills/skillopt-sleep/SKILL.md`'s frontmatter `description` said
-"...consolidate validated CLAUDE.md/SKILL.md behind a held-out gate" — the
-`CLAUDE.md/SKILL.md` substring reads as a broken relative path to that
-linter's `[A-Za-z0-9_\-./]+/SKILL\.md` regex. Reworded to "CLAUDE.md and
-SKILL.md"; no behavior or meaning changed. Carry this rewording forward on
-re-vendor.
+## Deviations from upstream
+
+1. **Cosmetic — `check_paths.py` wording.** `skills/skillopt-sleep/SKILL.md`'s
+   frontmatter `description` said "...consolidate validated CLAUDE.md/SKILL.md
+   behind a held-out gate" — the `CLAUDE.md/SKILL.md` substring reads as a
+   broken relative path to this repo's `[A-Za-z0-9_\-./]+/SKILL\.md` linter
+   regex. Reworded to "CLAUDE.md and SKILL.md"; no behavior or meaning
+   changed.
+2. **Safety — secrets weren't redacted in the files that actually go live.**
+   `staging.py`'s `redact_secrets()` was applied to `diagnostics.json` and CLI
+   error logging, but **not** to `proposed_SKILL.md` / `proposed_CLAUDE.md` —
+   the exact files `adopt()` copies over your live `CLAUDE.md` / managed
+   `SKILL.md` (with `--auto-adopt`, with no human in the loop). Since
+   `reflect()`'s prompt is built from real harvested session text, a secret
+   pasted into a real debugging session could have landed in your live memory
+   file unredacted, despite the "secrets are redacted from prompts" claim
+   below. Fixed: `write_staging()` now runs both through `redact_secrets()`
+   before writing.
+3. **Safety — the crontab line was built via unescaped f-string
+   interpolation.** `scheduler.py`'s `_runner_cmd()` wrapped `project` (an
+   arbitrary filesystem path) in manual `"..."` quoting, then wrote the result
+   straight into your real crontab — which cron runs through `sh -c` on every
+   fire. A path containing `"`, `` ` ``, `$( )`, or `;` could break out of the
+   quoting and inject an arbitrary command into your crontab. Fixed: `project`,
+   `logdir`, `log`, and the repo root are now `shlex.quote()`-d before
+   interpolation.
+4. **Safety — `max_tokens_per_night` was a dead config key.** `config.py`
+   declared it in `DEFAULTS`, and `budget.py` already had a `Budget` /
+   `plan_depth` heuristic built for exactly this purpose, but nothing in the
+   production `run_sleep_cycle()` path ever read it — a `--backend
+   claude`/`--backend codex` night had no real ceiling on API spend. Fixed:
+   `cycle.py` now starts a `Budget` right after backend construction (so
+   harvest/mine spend counts too), sizes `dream_rollouts` down via
+   `plan_depth()` when the remaining budget is tight, and appends a `report`
+   note whenever it caps rollouts or the budget is exhausted at night's end —
+   no silent truncation. This caps *rollout depth per task*, not a hard
+   mid-call abort inside a single `dream_consolidate()` call; a night can
+   still overshoot the cap somewhat if an individual rollout is unusually
+   token-heavy. That residual gap is real and not yet closed.
+5. **Cosmetic — dead hardcoded path.** `backend.py`'s `resolve_codex_path()`
+   listed `~/.nvm/versions/node/v22.22.3/bin/codex` as a candidate ahead of
+   the generic "any nvm node version" scan a few lines later, which already
+   covers it. Removed; no behavior change for anyone not on that exact nvm
+   version, one less leftover-looking line for everyone else.
 
 ## What this plugin is
 
@@ -74,14 +114,20 @@ immediately). Add `--backend claude` to spend real budget replaying this
 repo's own recurring tasks and get genuine lift on `CLAUDE.md` / a target
 `SKILL.md`.
 
-## Safety model (unchanged from upstream)
+## Safety model
 
 - Harvest is **read-only** over `~/.claude` session transcripts.
 - Edits are proposed, gated against a held-out replay slice, and **staged**
   under `.skillopt-sleep/staging/<date>/` — nothing live is touched.
 - `adopt` is explicit and backs up the prior file first (unless you opt into
   `--auto-adopt`).
-- Per-night token/task budget caps; secrets are redacted from prompts.
+- `max_tasks_per_night` is a hard cap (mining stops there). `max_tokens_per_night`
+  sizes `dream_rollouts` down via `plan_depth()` and is reported when hit, but
+  is not a hard mid-call abort — see deviation #4 above for the exact scope.
+- Secrets (API keys, bearer tokens, private-key blocks) are redacted before
+  anything is written to the staging dir, including `proposed_SKILL.md` /
+  `proposed_CLAUDE.md` (deviation #2 above) — not just diagnostics.
+- The generated crontab line is `shlex.quote()`-d (deviation #3 above).
 
 ## What was and wasn't vendored
 

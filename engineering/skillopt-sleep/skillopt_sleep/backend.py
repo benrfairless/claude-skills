@@ -711,9 +711,7 @@ def resolve_codex_path(explicit: str = "") -> str:
     env = os.environ.get("SKILLOPT_SLEEP_CODEX_PATH")
     if env:
         return env
-    candidates = [
-        os.path.expanduser("~/.nvm/versions/node/v22.22.3/bin/codex"),
-    ]
+    candidates = []
     # any nvm node version
     nvm = os.path.expanduser("~/.nvm/versions/node")
     if os.path.isdir(nvm):

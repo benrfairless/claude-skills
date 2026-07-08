@@ -106,6 +106,14 @@ def write_staging(
     out = os.path.join(staging_root(project), _ts_dir())
     os.makedirs(out, exist_ok=True)
 
+    # reflect()'s prompt is built from real harvested session text, which can
+    # carry anything a user pasted while debugging (an API key, a .env dump).
+    # These are the files `adopt()` copies over the LIVE CLAUDE.md / SKILL.md
+    # (with --auto-adopt, with no human in the loop) — scrub them the same as
+    # every other on-disk artifact rather than only the diagnostics dump.
+    proposed_skill = redact_secrets(proposed_skill)
+    proposed_memory = redact_secrets(proposed_memory)
+
     manifest = {
         "live_skill_path": live_skill_path,
         "live_memory_path": live_memory_path,

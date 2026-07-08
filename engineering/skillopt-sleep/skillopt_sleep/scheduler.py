@@ -18,6 +18,7 @@ cron is the portable mechanism on Linux/macOS. On systems without `crontab`,
 from __future__ import annotations
 
 import os
+import shlex
 import shutil
 import subprocess
 import sys
@@ -68,10 +69,16 @@ def _split_managed(crontab: str) -> Tuple[str, List[str]]:
 def _runner_cmd(project: str, backend: str, extra: str, python: str) -> str:
     logdir = os.path.join(project, ".skillopt-sleep")
     log = os.path.join(logdir, "cron.log")
+    # This line is written straight into the user's real crontab, which cron
+    # runs through `sh -c` on every fire — shell-quote every interpolated
+    # path (not just wrap in "..."), since a project dir containing a `"`,
+    # `` ` ``, `$( )`, or `;` would otherwise break out of the quoted context.
+    project_q, logdir_q, log_q = shlex.quote(project), shlex.quote(logdir), shlex.quote(log)
+    repo_root_q = shlex.quote(_repo_root())
     # use absolute python + -m so cron's minimal env still works
-    cmd = (f'{python} -m skillopt_sleep run --project "{project}" '
-           f'--scope invoked --backend {backend} {extra}'.rstrip())
-    return f'mkdir -p "{logdir}"; cd "{_repo_root()}" && {cmd} >> "{log}" 2>&1'
+    cmd = (f'{shlex.quote(python)} -m skillopt_sleep run --project {project_q} '
+           f'--scope invoked --backend {shlex.quote(backend)} {extra}'.rstrip())
+    return f'mkdir -p {logdir_q}; cd {repo_root_q} && {cmd} >> {log_q} 2>&1'
 
 
 def _repo_root() -> str:

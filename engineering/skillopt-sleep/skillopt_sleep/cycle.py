@@ -11,10 +11,12 @@ from __future__ import annotations
 
 import os
 import sys
+import time
 from dataclasses import dataclass
 from typing import List, Optional
 
 from skillopt_sleep.backend import get_backend
+from skillopt_sleep.budget import Budget, plan_depth
 from skillopt_sleep.config import SleepConfig, load_config
 from skillopt_sleep.dream import dream_consolidate
 from skillopt_sleep.harvest_sources import harvest_for_config
@@ -119,6 +121,13 @@ def run_sleep_cycle(
     )
     _progress(cfg, f"night {night}: project={project} backend={backend.name}")
 
+    # ── budget: max_tokens_per_night was declared in DEFAULTS but never
+    # enforced anywhere in this path (a real gap vs. the README's "budget
+    # capped" claim). Start tracking now, before harvest/mine can spend
+    # tokens via the LLM miner, so the cap accounts for the whole night.
+    budget = Budget(max_tokens=cfg.get("max_tokens_per_night") or None)
+    budget.start(time.time, backend.tokens_used())
+
     # ── live skill/memory docs ───────────────────────────────────────────
     live_memory_path = os.path.join(project, "CLAUDE.md")
     live_skill_path = cfg.managed_skill_path()
@@ -150,7 +159,6 @@ def run_sleep_cycle(
         if since is None:
             lookback_hours = cfg.get("lookback_hours", 72)
             if lookback_hours is not None and lookback_hours > 0:
-                import time
                 ref_time = clock if clock is not None else time.time()
                 cutoff = ref_time - lookback_hours * 3600
                 since = _now_iso(cutoff)
@@ -226,11 +234,33 @@ def run_sleep_cycle(
     history_tasks = []
     if recall_k > 0:
         history_tasks = [TaskRecord.from_dict(d) for d in state.task_archive()]
+
+    # Size dream_rollouts to what's left of max_tokens_per_night, reusing the
+    # plan_depth heuristic (rollouts affordable per task, given ~1.5k
+    # tokens/rollout) that was already written for this purpose but never
+    # called from the production path. No-op when no budget is configured
+    # (plan_depth returns the configured default unchanged).
+    configured_rollouts = int(cfg.get("dream_rollouts", 1) or 1)
+    dream_rollouts = configured_rollouts
+    if budget.max_tokens:
+        already_spent = budget.tokens_spent(backend.tokens_used())
+        remaining_budget = Budget(max_tokens=max(0, budget.max_tokens - already_spent))
+        _, dream_rollouts = plan_depth(
+            remaining_budget, n_tasks=len(tasks), default_k=configured_rollouts,
+        )
+        dream_rollouts = min(configured_rollouts, dream_rollouts)
+        if dream_rollouts < configured_rollouts:
+            report.notes.append(
+                f"budget: capped dream_rollouts {configured_rollouts}->{dream_rollouts} "
+                f"to stay within max_tokens_per_night={budget.max_tokens} "
+                f"(already spent {already_spent} on harvest/mine)"
+            )
+
     result = dream_consolidate(
         backend, tasks, skill, memory,
         history_tasks=history_tasks,
         recall_k=recall_k,
-        dream_rollouts=int(cfg.get("dream_rollouts", 1) or 1),
+        dream_rollouts=dream_rollouts,
         dream_factor=int(cfg.get("dream_factor", 0) or 0),
         edit_budget=cfg.get("edit_budget", 4),
         gate_metric=cfg.get("gate_metric", "mixed"),
@@ -258,6 +288,12 @@ def run_sleep_cycle(
     report.rejected_edits = result.rejected_edits
     report.tokens_used = backend.tokens_used()
     report.ended_at = _now_iso(clock)
+    if budget.max_tokens and budget.exhausted(tokens_now=backend.tokens_used(), clock_fn=time.time):
+        report.notes.append(
+            f"budget: max_tokens_per_night ({budget.max_tokens}) reached this night "
+            f"(spent {backend.tokens_used()}); dream_rollouts were already capped above "
+            f"— lower max_tasks_per_night or raise the budget for deeper nights"
+        )
 
     # ── 5. stage (unless dry-run) ────────────────────────────────────────
     staging_dir = ""
