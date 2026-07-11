@@ -43,17 +43,25 @@ the optimizer writes, add `--preferences "<your house rules>"`.
 
 ## Steps to follow
 
-1. **Run the requested action** via the bundled runner above. Capture stdout.
-2. **For `run` / `dry-run`:** after it completes, `Read` the generated
+1. **For `schedule`:** confirm with the user *before* running it. Unlike
+   every other action, `schedule` writes directly to the user's real
+   crontab the moment it runs (via `scheduler.schedule()` → `crontab -`) —
+   it is not a preview. Tell them what will be scheduled (project, hour,
+   minute, backend) and get an explicit go-ahead first. If they'd rather
+   review the exact line before anything is installed, offer
+   `${CLAUDE_PLUGIN_ROOT}/scripts/install-cron.sh` instead (prints the line;
+   installs nothing).
+2. **Run the requested action** via the bundled runner above. Capture stdout.
+3. **For `run` / `dry-run`:** after it completes, `Read` the generated
    `report.md` in the staging dir it prints, and show the user:
    - held-out score: baseline → candidate (the proof it helped)
    - the gate decision (accept/reject) and the exact edits it proposes
    - where the proposal is staged
-3. **For `run` that produced an accepted proposal:** tell the user the diff is
+4. **For `run` that produced an accepted proposal:** tell the user the diff is
    staged and that **nothing live changed yet**. Offer to run `/skillopt-sleep adopt`.
-4. **For `adopt`:** confirm which live files were updated and that backups were
+5. **For `adopt`:** confirm which live files were updated and that backups were
    written under the staging dir's `backup/`.
-5. **Never** edit `CLAUDE.md` or `SKILL.md` yourself — only the `adopt` action
+6. **Never** edit `CLAUDE.md` or `SKILL.md` yourself — only the `adopt` action
    does that, with a backup. Respect the review gate.
 
 ## Safety reminders
@@ -61,6 +69,8 @@ the optimizer writes, add `--preferences "<your house rules>"`.
 - Harvest is **read-only** over `~/.claude`. Replay in `mock` mode runs no
   shell side effects.
 - The cycle stages proposals; the user is in control of adoption.
-- If the user asks to schedule this nightly, point them at
-  `${CLAUDE_PLUGIN_ROOT}/scripts/install-cron.sh` (prints a crontab line; does
-  not install anything without confirmation).
+- `schedule` installs a real crontab entry immediately — it is not a preview,
+  unlike `run`/`dry-run`. Always confirm with the user first (see Steps to
+  follow, step 1). `${CLAUDE_PLUGIN_ROOT}/scripts/install-cron.sh` remains
+  available as a print-only alternative for a user who wants to inspect or
+  hand-edit the line before installing anything.

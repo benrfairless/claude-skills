@@ -355,7 +355,8 @@ def run_sleep_cycle(
             # credentials (e.g. a codex 401 stderr dump), so scrub secret-looking
             # substrings before persisting them to the on-disk diagnostics
             # (unless the user explicitly disabled redact_secrets above).
-            with open(os.path.join(staging_dir, "diagnostics.json"), "w", encoding="utf-8") as _fh:
+            _diag_path = os.path.join(staging_dir, "diagnostics.json")
+            with open(_diag_path, "w", encoding="utf-8") as _fh:
                 _json.dump({
                     "night": night,
                     "backend": cfg.get("backend"),
@@ -372,6 +373,13 @@ def run_sleep_cycle(
                     ),
                     "holdout_detail": _maybe_redact(getattr(result, "holdout_detail", [])),
                 }, _fh, indent=2)
+            # diagnostics.json is plaintext, real session-derived content —
+            # tighten from the process umask default (see staging.py's
+            # _secure_file for the same reasoning applied to its siblings).
+            try:
+                os.chmod(_diag_path, 0o600)
+            except OSError:
+                pass
         except Exception:
             pass
         state.set_last_harvest(project, started)

@@ -76,6 +76,24 @@ def _ts_dir() -> str:
     return time.strftime("%Y%m%d-%H%M%S", time.localtime())
 
 
+def _secure_dir(path: str) -> None:
+    """Restrict to owner-only. These directories hold real harvested session
+    content (task intents, code excerpts, project context) in plaintext,
+    which lands world-readable by default on a typical multi-user box unless
+    we tighten it ourselves."""
+    try:
+        os.chmod(path, 0o700)
+    except OSError:
+        pass
+
+
+def _secure_file(path: str) -> None:
+    try:
+        os.chmod(path, 0o600)
+    except OSError:
+        pass
+
+
 def staging_root(project: str) -> str:
     return os.path.join(project, ".skillopt-sleep", "staging")
 
@@ -110,8 +128,13 @@ def write_staging(
     the caller is expected to have already logged a loud warning (see
     cycle.py) before passing False.
     """
-    out = os.path.join(staging_root(project), _ts_dir())
+    root = staging_root(project)
+    out = os.path.join(root, _ts_dir())
     os.makedirs(out, exist_ok=True)
+    # secure both the per-run leaf dir and the shared .skillopt-sleep root
+    # (root may already exist from a prior night; still worth tightening).
+    _secure_dir(os.path.dirname(root))  # <project>/.skillopt-sleep
+    _secure_dir(out)
 
     # reflect()'s prompt is built from real harvested session text, which can
     # carry anything a user pasted while debugging (an API key, a .env dump).
@@ -141,23 +164,34 @@ def write_staging(
         "accepted": report.accepted,
     }
     if proposed_skill is not None:
-        with open(os.path.join(out, "proposed_SKILL.md"), "w", encoding="utf-8") as f:
+        p = os.path.join(out, "proposed_SKILL.md")
+        with open(p, "w", encoding="utf-8") as f:
             f.write(proposed_skill)
+        _secure_file(p)
     if proposed_memory is not None:
-        with open(os.path.join(out, "proposed_CLAUDE.md"), "w", encoding="utf-8") as f:
+        p = os.path.join(out, "proposed_CLAUDE.md")
+        with open(p, "w", encoding="utf-8") as f:
             f.write(proposed_memory)
-    with open(os.path.join(out, "report.json"), "w", encoding="utf-8") as f:
+        _secure_file(p)
+    p = os.path.join(out, "report.json")
+    with open(p, "w", encoding="utf-8") as f:
         json.dump(report_dict, f, ensure_ascii=False, indent=2)
-    with open(os.path.join(out, "report.md"), "w", encoding="utf-8") as f:
+    _secure_file(p)
+    p = os.path.join(out, "report.md")
+    with open(p, "w", encoding="utf-8") as f:
         f.write(report_md)
-    with open(os.path.join(out, "manifest.json"), "w", encoding="utf-8") as f:
+    _secure_file(p)
+    p = os.path.join(out, "manifest.json")
+    with open(p, "w", encoding="utf-8") as f:
         json.dump(manifest, f, ensure_ascii=False, indent=2)
+    _secure_file(p)
     return out
 
 
 def _backup(path: str, backup_dir: str) -> None:
     if os.path.exists(path):
         os.makedirs(backup_dir, exist_ok=True)
+        _secure_dir(backup_dir)
         shutil.copy2(path, os.path.join(backup_dir, os.path.basename(path)))
 
 

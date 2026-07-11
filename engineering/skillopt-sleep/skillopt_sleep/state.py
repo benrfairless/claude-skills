@@ -52,10 +52,23 @@ class SleepState:
         return cls(path, dict(DEFAULT_STATE))
 
     def save(self) -> None:
-        os.makedirs(os.path.dirname(self.path), exist_ok=True)
+        # state.json carries real harvested session content (task intents,
+        # code excerpts, project context) in plaintext, kept indefinitely —
+        # tighten permissions rather than leave them at the process umask
+        # default, which is world-readable on a typical multi-user box.
+        state_dir = os.path.dirname(self.path)
+        os.makedirs(state_dir, exist_ok=True)
+        try:
+            os.chmod(state_dir, 0o700)
+        except OSError:
+            pass
         tmp = self.path + ".tmp"
         with open(tmp, "w") as f:
             json.dump(self.data, f, ensure_ascii=False, indent=2)
+        try:
+            os.chmod(tmp, 0o600)
+        except OSError:
+            pass
         os.replace(tmp, self.path)
 
     # accessors --------------------------------------------------------------

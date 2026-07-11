@@ -141,6 +141,41 @@ they are not upstream yet.
     helper filters to a safe-identifier allowlist (`^[A-Za-z0-9_-]{1,64}$`)
     before any name is used as a filename or shell text, in all three
     backends.
+14. **Cosmetic — dead cross-reference in `SKILL.md`.**
+    `skills/skillopt-sleep/SKILL.md` pointed to
+    `docs/superpowers/specs/2026-06-07-skillopt-sleep-claude-code-plugin-design.md`
+    "for the full design" — that path is not in this repo (see "What was and
+    wasn't vendored" below; `docs/` was deliberately excluded). An agent
+    following the pointer hits a missing file. Fixed: points to the real
+    upstream guide URL (microsoft.github.io/SkillOpt/docs/guideline.html#sleep)
+    instead, with a note on why the local path is absent.
+15. **Safety — `commands/skillopt-sleep.md` didn't signal that `schedule`
+    installs immediately.** The command doc's action table listed `schedule`
+    as an ordinary action alongside `status`/`dry-run`/`run` (all of which
+    are safe previews or explicitly staged), while its own "Safety
+    reminders" section separately said to point users at the print-only
+    `install-cron.sh` instead — two different, uncoordinated stories about
+    the same action. `scheduler.schedule()` writes directly to the user's
+    real crontab the moment it runs, with no confirmation step in between.
+    Fixed: "Steps to follow" now has an explicit step 1 telling the agent to
+    confirm with the user *before* running `schedule` (what project/hour/
+    minute/backend will be scheduled), with `install-cron.sh` offered as the
+    print-only alternative; "Safety reminders" now says the same thing
+    instead of contradicting the action table.
+16. **Hardening — state/staging directories and files had no restrictive
+    permissions.** `state.json` (the cross-night task archive) and
+    `.skillopt-sleep/staging/<ts>/`'s proposal/report/diagnostics files
+    contain real harvested session content in plaintext, created via plain
+    `os.makedirs`/`open(..., "w")` — world-readable-by-default on a typical
+    multi-user Linux box (subject to the process umask). `redact_secrets()`
+    scrubs known secret *patterns*, but the files still carry real task
+    intents, code excerpts, and project context otherwise. Fixed: both
+    `state.py` and `staging.py` now `os.chmod()` every directory they create
+    to `0o700` and every file they write to `0o600` (best-effort, silently
+    skipped on platforms without POSIX permission bits). Live `CLAUDE.md`/
+    `SKILL.md` files themselves are intentionally left at their existing
+    permissions — those are the user's own, often-committed files, not new
+    output this plugin introduces.
 
 ## What this plugin is
 
@@ -229,6 +264,14 @@ repo's own recurring tasks and get genuine lift on `CLAUDE.md` / a target
 - Only `mock`/`claude`/`codex`/`copilot` backends are supported — a
   Microsoft-internal Azure OpenAI backend was removed rather than carried
   forward (deviation #12).
+- `schedule` installs a real crontab entry **immediately** — unlike every
+  other action, it is not a preview or a staged proposal. An agent driving
+  `/skillopt-sleep schedule` must confirm with the user first (deviation
+  #15); `install-cron.sh` remains available as a print-only alternative.
+- Every directory `state.py`/`staging.py` create is `chmod 0700` and every
+  file they write is `chmod 0600` (best-effort), so `state.json` and staged
+  proposals/reports/diagnostics aren't left at the world-readable process
+  umask default on a shared machine (deviation #16).
 
 ## What was and wasn't vendored
 
