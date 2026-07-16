@@ -159,6 +159,12 @@ See [standards/git/git-workflow-standards.md](standards/git/git-workflow-standar
 
 ## Current Version
 
+**Unreleased (post-v2.11.1) — productivity/fable-goal (ramble → autonomous /goal prompt):**
+
+Improved port of `duncan-buildroom/freeskills` `fable-goal` (informal "free to use and modify" grant — quoted, not relicensed; see the `attribution` block). Converts a rambling description of a desired outcome into one polished, copy-paste /goal prompt for a fresh autonomous session — the prompt is the deliverable, never the build. Adds over upstream: wrong-tool check, observable-done principle, six-slot extraction (deliverable/quantity/stakes/tools/quality/destination), per-medium verification defaults, six-point pre-delivery self-check, anti-pattern list + failure-mode catalog reference, second worked example in a non-web medium. Ships `goal_prompt_self_check.py` (stdlib runner for the mechanically checkable self-check subset — word count 150–350, goal line, autonomy directive, verification/freedom/destination language; exit 0/1, `--sample`, `--output json`), `/cs:fable-goal` command. Intentionally no `agents/`/`assets/` (single reasoning pass; see plugin README design notes). SKILL.md is a full PASS on the write-a-skill 6-item checklist. Counters: skills 357 → 358 (this PR also trues up pre-existing engineering-row drift 355 → 357); tools 602 → 603; refs 731 → 732; commands 109 → 110; plugins 83 → 84.
+
+---
+
 **Version:** v2.11.1 (pm/product agent-harness domains — deep audit + orchestrated loops for product-team & project-management)
 
 **v2.11.1 highlights — both PM/product routers become agent harnesses:**

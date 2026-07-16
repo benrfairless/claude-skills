@@ -90,7 +90,7 @@ CHECKS = [
         "destination",
         "Delivery destination named (deploy / serve / link / folder / path / save / publish)",
         re.compile(
-            r"(deploy|serve me|the links?\b|a folder called|in my home directory|"
+            r"(deploy|serve me|the \d*\s*links?\b|a folder called|in my home directory|"
             r"save (it|them|the)|publish|file path|~/[\w./-]+)",
             re.IGNORECASE,
         ),
