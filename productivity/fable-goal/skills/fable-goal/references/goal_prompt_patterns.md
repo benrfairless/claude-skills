@@ -66,6 +66,6 @@ Note how the quality bar inverted for functional work (concrete behavior — dry
 
 - Duncan / buildroom, [`freeskills/fable-goal`](https://github.com/duncan-buildroom/freeskills) — the upstream skill and the "25 websites" reference example that defines the genre
 - Anthropic, [Claude Code best practices](https://www.anthropic.com/engineering/claude-code-best-practices) — verification loops and target-based iteration for agentic runs
-- Anthropic, [Effective harnesses for long-running agents](https://www.anthropic.com/engineering) — observable completion conditions; why sessions need self-checkable done states
+- Anthropic, [Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) — observable completion conditions; why sessions need self-checkable done states
 - Anthropic, [Prompt engineering overview](https://docs.claude.com/en/docs/build-with-claude/prompt-engineering/overview) — clarity of desired outcome over prescriptive process
 - This repo's `engineering/agent-harness` references — verifier's law: work you can verify mechanically gets done reliably; work you can't, doesn't
