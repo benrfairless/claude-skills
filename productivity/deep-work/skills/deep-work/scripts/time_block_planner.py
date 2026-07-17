@@ -158,8 +158,12 @@ def plan(start: int, end: int, tasks: List[Dict[str, Any]],
         cursor = advance(cursor, dur_a, label_a, "shallow")
 
     # --- 4. Backward pass: shallow batch B ends exactly at --end ---
-    if cursor + dur_b > end:
-        overflow = cursor + dur_b - end
+    # The 10-min buffer invariant applies before batch B too: when batch B would
+    # directly follow a work block, that buffer is part of the day's budget.
+    need_buffer = (BUFFER_MIN if batch_b and events and events[-1]["kind"] in ("deep", "shallow")
+                   else 0)
+    if cursor + need_buffer + dur_b > end:
+        overflow = cursor + need_buffer + dur_b - end
         return {
             "verdict": "OVERFLOW",
             "reason": (f"The day overflows {fmt(end)} by {overflow} min. "
@@ -170,6 +174,9 @@ def plan(start: int, end: int, tasks: List[Dict[str, Any]],
             "overflow_minutes": overflow,
             "defer_candidates": [t["name"] for t in (batch_b or batch_a)],
         }
+    if need_buffer:
+        events.append(_ev(cursor, cursor + BUFFER_MIN, "Buffer — stand up, reset", "buffer"))
+        cursor += BUFFER_MIN
     start_b = end - dur_b
     if start_b > cursor:
         if not ctx["lunch_placed"] and cursor <= ctx["lunch"] and ctx["lunch"] + LUNCH_MIN <= start_b:

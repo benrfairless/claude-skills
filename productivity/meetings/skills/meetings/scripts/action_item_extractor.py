@@ -62,6 +62,9 @@ exit codes:
 
 def _extract_owner_and_text(text: str, owner: Optional[str]) -> Tuple[Optional[str], str]:
     """Refine owner from inside an already-captured action text."""
+    m = MENTION_OWNED_RE.match(text.strip())
+    if m:  # "@owner will/to rest" at the head — strip the owner phrase from the text
+        return m.group("owner"), m.group("text")
     m = MENTION_ANY_RE.search(text)
     if m:
         return m.group("owner"), text
